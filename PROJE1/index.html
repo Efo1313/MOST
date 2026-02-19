@@ -9,34 +9,41 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         :root { --pink: #ff007a; --green: #39ff14; --bg: #050505; --btn: #121212; }
+        
+        * { box-sizing: border-box; }
         body { margin: 0; background: var(--bg); color: white; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        #header { flex-shrink: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid #222; }
+        /* Üst Panel Düzeni */
+        #header { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid #222; background: var(--bg); z-index: 10; }
         h1 { margin: 5px 0; font-size: 1.4rem; text-transform: uppercase; }
         h1 span { color: var(--pink); }
 
-        .player-container { width: 100%; max-width: 600px; border-radius: 8px; overflow: hidden; background: #000; aspect-ratio: 16/9; }
+        /* Video Konteynırı - Dikeyde 16:9, Yatayda Tam Ekran */
+        .player-container { width: 100%; max-width: 600px; background: #000; aspect-ratio: 16/9; }
         .status { width: 100%; max-width: 600px; display: flex; justify-content: space-between; padding: 5px 10px; font-size: 10px; font-weight: bold; color: var(--green); }
 
-        .cats { display: flex; gap: 8px; width: 100%; max-width: 600px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+        .cats { display: flex; gap: 8px; width: 100%; max-width: 600px; overflow-x: auto; padding: 10px; scrollbar-width: none; }
         .cats::-webkit-scrollbar { display: none; }
         .cat-btn { background: var(--btn); border: 1px solid #333; color: #888; padding: 6px 12px; border-radius: 20px; font-size: 10px; white-space: nowrap; cursor: pointer; }
         .cat-btn.active { border-color: var(--green); color: var(--green); }
 
-        #list-area { flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch; }
+        /* Liste Alanı */
+        #list-area { flex-grow: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 600px; margin: 0 auto; }
         .btn { background: var(--btn); border: 1px solid #333; color: #ccc; padding: 15px 5px; border-radius: 10px; font-size: 11px; text-align: center; font-weight: bold; cursor: pointer; }
         .btn.active { background: linear-gradient(135deg, var(--pink), #a600ff); border-color: #fff; color: #fff; }
 
-        .footer-text { text-align: center; padding: 20px; font-size: 10px; color: #444; font-weight: bold; }
+        /* İmza Alanı */
+        .footer-text { text-align: center; padding: 20px; font-size: 10px; color: #444; letter-spacing: 1px; font-weight: bold; }
 
-        /* YATAY MOD DÜZELTMESİ: Resimdeki tam kaplamama sorununu çözer */
+        /* YATAY MOD DÜZELTMESİ (Resimdeki sorunu çözen kısım) */
         @media screen and (orientation: landscape) {
-            #header h1, .status, .cats, .footer-text { display: none !important; }
+            #header h1, .status, .cats, .footer-text { display: none; }
+            #header { border: none; }
             #list-area { display: none; }
-            #header { border: none; padding: 0; }
-            .player-container { max-width: 100% !important; width: 100vw !important; height: 100vh !important; aspect-ratio: auto !important; border-radius: 0; }
             body { justify-content: center; }
+            .player-container { max-width: 100%; width: 100vw; height: 100vh; aspect-ratio: auto; border-radius: 0; }
+            .plyr { height: 100%; }
         }
     </style>
 </head>
@@ -67,12 +74,13 @@
             kanallar = await res.json();
             init();
         } catch (e) {
-            log.innerText = "VERİ ALINAMADI!";
+            log.innerText = "JSON OKUNAMADI!";
         }
     }
 
     function init() {
-        if (!kanallar.length) return;
+        if (!kanallar || kanallar.length === 0) return;
+        
         const uniqueCats = [...new Set(kanallar.map(k => k.cat.trim().toUpperCase()))];
         const categories = ['HEPSİ', ...uniqueCats];
         
@@ -80,7 +88,7 @@
             `<div class="cat-btn ${i===0?'active':''}" onclick="filtrele('${c}', this)">${c}</div>`
         ).join('');
 
-        // Filtrelemeyi garantiye almak için kısa bir gecikme
+        // Listenin dolduğundan emin olmak için kısa gecikme
         setTimeout(() => { filtrele('HEPSİ'); }, 100);
     }
 
@@ -91,6 +99,7 @@
         }
         const list = document.getElementById('channel-list');
         list.innerHTML = "";
+        
         const aranan = cat.toUpperCase().trim();
         const f = aranan === 'HEPSİ' ? kanallar : kanallar.filter(k => k.cat.trim().toUpperCase() === aranan);
 
