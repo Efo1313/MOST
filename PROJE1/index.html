@@ -17,9 +17,24 @@
             --btn-black: #121212; --glass-white: rgba(255, 255, 255, 0.1);
         }
         
-        body { background: var(--deep-bg); color: white; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; touch-action: manipulation; }
+        /* Ekranın dışarı taşmasını engellemek için */
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: var(--deep-bg); color: white; font-family: 'Inter', sans-serif; }
+
+        /* SABİT ÜST PANEL: Logo, Player, Status ve Kategoriler burada çakılı kalır */
+        #header-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--deep-bg);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 15px 0 15px;
+        }
         
-        h1 { font-size: 1.6rem; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
+        h1 { font-size: 1.6rem; font-weight: 900; margin: 5px 0 15px 0; text-transform: uppercase; letter-spacing: 2px; }
         h1 span { color: var(--deep-pink); text-shadow: 0 0 10px var(--deep-pink); }
 
         .player-container { 
@@ -40,7 +55,7 @@
         .spinner { width: 35px; height: 35px; border: 3px solid var(--glass-white); border-top: 3px solid var(--deep-pink); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .status-bar { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; padding: 10px; font-size: 12px; font-weight: bold; background: rgba(255,255,255,0.02); border-radius: 0 0 10px 10px; margin-bottom: 10px; }
+        .status-bar { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; padding: 10px; font-size: 12px; font-weight: bold; background: rgba(255,255,255,0.02); border-radius: 0 0 10px 10px; margin-bottom: 5px; box-sizing: border-box; }
 
         .category-bar { display: flex; gap: 8px; width: 100%; max-width: 800px; margin: 10px 0; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
         .category-bar::-webkit-scrollbar { display: none; }
@@ -48,12 +63,24 @@
         .cat-btn { background: var(--btn-black); border: 1px solid #333; color: #888; padding: 8px 18px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.3s; white-space: nowrap; }
         .cat-btn.active { border-color: var(--neon-green); color: var(--neon-green); }
 
+        /* KAYDIRILABİLİR ALAN: Kanalların olduğu yer */
+        #scroll-content {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 0 15px;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .grid { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
             gap: 12px; 
             width: 100%; 
             max-width: 800px; 
+            margin: 0 auto;
         }
         
         .btn { 
@@ -63,37 +90,40 @@
         }
         .btn.active { background: linear-gradient(135deg, #ff007a 0%, #a600ff 100%) !important; border: 1.8px solid #fff !important; box-shadow: 0 5px 15px rgba(255, 0, 122, 0.3); }
 
-        .footer { width: 100%; max-width: 800px; text-align: center; padding: 25px 0; color: #333; font-size: 10px; letter-spacing: 1px; }
+        .footer { width: 100%; max-width: 800px; text-align: center; padding: 40px 0; color: #333; font-size: 10px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
-    <h1>MOST <span>PRO</span></h1>
+    <div id="header-fixed">
+        <h1>MOST <span>PRO</span></h1>
 
-    <div class="player-container" id="touch-area">
-        <div id="brightness-overlay"></div>
-        <div id="gesture-info"></div>
-        <div id="loader"><div class="spinner"></div></div>
-        <video id="deepPlayer" playsinline controls></video>
+        <div class="player-container" id="touch-area">
+            <div id="brightness-overlay"></div>
+            <div id="gesture-info"></div>
+            <div id="loader"><div class="spinner"></div></div>
+            <video id="deepPlayer" playsinline controls></video>
+        </div>
+
+        <div class="status-bar">
+            <span id="log" style="color: var(--neon-green);">BAĞLANTI KURULUYOR...</span>
+            <span style="color: #444;">DUO V.1.3.6</span>
+        </div>
+
+        <div class="category-bar">
+            <div class="cat-btn active" onclick="filterCat('hepsi', this)">HEPSİ</div>
+            <div class="cat-btn" onclick="filterCat('ulusal', this)">ULUSAL</div>
+            <div class="cat-btn" onclick="filterCat('spor', this)">SPOR</div>
+            <div class="cat-btn" onclick="filterCat('haber', this)">HABER</div>
+            <div class="cat-btn" onclick="filterCat('sinema', this)">SİNEMA</div>
+            <div class="cat-btn" onclick="filterCat('bg tv', this)">BG TV</div>
+        </div>
     </div>
 
-    <div class="status-bar">
-        <span id="log" style="color: var(--neon-green);">BAĞLANTI KURULUYOR...</span>
-        <span style="color: #444;">DUO V.1.3.6</span>
+    <div id="scroll-content">
+        <div class="grid" id="channel-list"></div>
+        <div class="footer">DESIGNED BY YÜKSEL • 2026</div>
     </div>
-
-    <div class="category-bar">
-        <div class="cat-btn active" onclick="filterCat('hepsi', this)">HEPSİ</div>
-        <div class="cat-btn" onclick="filterCat('ulusal', this)">ULUSAL</div>
-        <div class="cat-btn" onclick="filterCat('spor', this)">SPOR</div>
-        <div class="cat-btn" onclick="filterCat('haber', this)">HABER</div>
-        <div class="cat-btn" onclick="filterCat('sinema', this)">SİNEMA</div>
-        <div class="cat-btn" onclick="filterCat('bg tv', this)">BG TV</div>
-    </div>
-
-    <div class="grid" id="channel-list"></div>
-
-    <div class="footer">DESIGNED BY YÜKSEL • 2026</div>
 
     <script>
         const video = document.getElementById('deepPlayer');
@@ -102,10 +132,11 @@
         const touchArea = document.getElementById('touch-area');
         const gestureInfo = document.getElementById('gesture-info');
         const brightnessOverlay = document.getElementById('brightness-overlay');
+        const header = document.getElementById('header-fixed');
+        const scrollContent = document.getElementById('scroll-content');
         
-        let kanallar = []; // Artık boş, JSON'dan dolacak.
+        let kanallar = [];
         let hls = null;
-        let retryCount = 0;
         let startY, startVal, isRightSide;
         let currentBrightness = 0;
 
@@ -113,17 +144,23 @@
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen']
         });
 
-        // KANALLARI DIŞ DOSYADAN ÇEKME FONKSİYONU
+        // Listenin üstten player kadar boşluk bırakmasını sağlar
+        function adjustLayout() {
+            const headerHeight = header.offsetHeight;
+            scrollContent.style.top = headerHeight + "px";
+        }
+
         async function fetchChannels() {
             try {
                 const response = await fetch('kanallar.json');
                 kanallar = await response.json();
                 log.innerText = "SİSTEM HAZIR";
                 filterCat('hepsi', document.querySelector('.cat-btn'));
+                // Veriler geldikten sonra yüksekliği tekrar hesapla
+                setTimeout(adjustLayout, 100);
             } catch (error) {
                 log.style.color = "var(--error-red)";
                 log.innerText = "LİSTE YÜKLENEMEDİ!";
-                console.error("Hata:", error);
             }
         }
 
@@ -153,7 +190,6 @@
 
         touchArea.addEventListener('touchend', () => { setTimeout(() => gestureInfo.style.display = 'none', 600); });
 
-        // KANAL LİSTELEME
         function filterCat(cat, el) {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             if(el) el.classList.add('active');
@@ -167,13 +203,13 @@
                 b.onclick = () => playCh(ch.url, b, ch.ad);
                 list.appendChild(b);
             });
+            // Kategori değişince listeyi en başa sar
+            scrollContent.scrollTop = 0;
         }
 
-        // OYNATMA
         function playCh(url, el, name) {
             document.querySelectorAll('.btn').forEach(x => x.classList.remove('active'));
             el.classList.add('active');
-            retryCount = 0;
             loader.style.display = "block";
             log.style.color = "var(--warning-yellow)";
             log.innerText = "⏳ " + name + " açılıyor...";
@@ -181,43 +217,20 @@
             if (hls) hls.destroy();
 
             if (Hls.isSupported()) {
-                hls = new Hls({ manifestLoadingMaxRetry: 5 });
+                hls = new Hls();
                 hls.loadSource(url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play().catch(() => { log.innerText = "▶ OYNATMAYA HAZIR"; });
+                    video.play();
                     loader.style.display = "none";
                     log.style.color = "var(--neon-green)";
                     log.innerText = "✅CANLI: " + name;
                 });
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        retryCount++;
-                        if (retryCount <= 5) {
-                            log.style.color = "var(--retry-orange)";
-                            log.innerText = `⚠️ Yeniden Deneniyor ${retryCount}/5...`;
-                            hls.startLoad();
-                        } else {
-                            loader.style.display = "none";
-                            log.style.color = "var(--error-red)";
-                            log.innerText = "❌ Yayın açılmadı.";
-                            hls.destroy();
-                        }
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.addEventListener('loadedmetadata', () => {
-                    video.play();
-                    loader.style.display = "none";
-                    log.style.color = "var(--neon-green)";
-                    log.innerText = "CANLI: " + name;
-                });
             }
         }
         
-        // Sayfa yüklendiğinde JSON'u getir
         window.onload = fetchChannels;
+        window.onresize = adjustLayout; // Ekran dönerse mesafeyi tekrar ayarla
     </script>
 </body>
 </html>
