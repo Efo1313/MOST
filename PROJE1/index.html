@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOST PRO - ABSOLUTE ZERO GAP</title>
+    <title>MOST PRO - CHROME FIXED</title>
     
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
@@ -19,6 +19,7 @@
         html, body { 
             height: 100%; margin: 0; padding: 0; overflow: hidden; 
             background: var(--deep-bg); color: white; font-family: 'Inter', sans-serif;
+            -webkit-text-size-adjust: 100%; /* Chrome mobil için font kaymasını engeller */
         }
 
         #fixed-header {
@@ -31,28 +32,32 @@
             align-items: center;
         }
 
-        h1 { font-size: 1.4rem; font-weight: 900; margin: 12px 0; text-transform: uppercase; letter-spacing: 2px; }
+        h1 { font-size: 1.4rem; font-weight: 900; margin: 10px 0; text-transform: uppercase; letter-spacing: 2px; }
         h1 span { color: var(--deep-pink); text-shadow: 0 0 10px var(--deep-pink); }
 
-        /* PLAYER - ALT BOŞLUKLAR SIFIRLANDI */
+        /* --- PLAYER DÜZENLEMESİ --- */
         .player-container { 
             width: 100%; max-width: 800px; aspect-ratio: 16 / 9;
             background: #000; position: relative; 
             border: none !important;
-            margin-bottom: 0 !important; /* Alt marj kesinlikle sıfır */
-            padding-bottom: 0 !important;
+            display: block; /* Chrome'da inline-block boşluğunu engeller */
+            line-height: 0; /* İçerideki tüm hayali boşlukları sıfırlar */
         }
 
-        /* STATUS BAR - PLAYER İLE ARADAKİ BOŞLUK TAMAMEN YOK EDİLDİ */
+        /* Plyr kütüphanesinin kendi alt boşluğunu sıfırlıyoruz */
+        .plyr { border-radius: 0 !important; }
+
+        /* --- STATUS BAR (YEŞİL YAZI) - TAM YAPIŞTIRMA --- */
         .status-bar { 
             width: 100%; max-width: 800px; 
-            padding: 2px 15px; /* Dikey boşluk minimuma çekildi */
+            padding: 2px 15px;
             box-sizing: border-box;
             display: flex; justify-content: space-between; 
             font-size: 10px; font-weight: bold; 
             background: rgba(255,255,255,0.03);
-            margin-top: -1px; /* Player'ın altına milimetrik yapıştırma */
-            line-height: 20px; /* Yazı yüksekliğini sabitleyerek boşluğu kontrol ettik */
+            margin-top: -1px !important; /* Player'ın dibine girmesi için zorunlu negatif margin */
+            position: relative;
+            z-index: 10;
         }
 
         .category-bar { 
@@ -71,7 +76,7 @@
 
         #scroll-area {
             position: absolute;
-            top: 350px; 
+            top: 340px; 
             bottom: 0; left: 0; right: 0;
             overflow-y: auto; padding: 15px;
             -webkit-overflow-scrolling: touch;
@@ -95,16 +100,12 @@
 <body>
 
     <div id="fixed-header">
-        <h1>MOST <span>PRO</span></h1>
-        
-        <div class="player-container" id="touch-area">
+        <h1>MOST <span>PRO</span></h1><div class="player-container" id="touch-area">
             <div id="loader"><div class="spinner"></div></div>
             <video id="deepPlayer" playsinline controls></video>
-        </div>
-
-        <div class="status-bar">
+        </div><div class="status-bar">
             <span id="log" style="color: var(--neon-green);">SİSTEM HAZIR</span>
-            <span style="color: #444;">V.1.9.0 ZERO-GAP</span>
+            <span style="color: #444;">V.1.9.1 FIXED</span>
         </div>
 
         <div class="category-bar" id="cat-bar"></div>
@@ -139,7 +140,7 @@
                 log.innerText = `SİSTEM HAZIR (${kanallar.length} KANAL)`;
                 createCategories();
                 filterCat('hepsi');
-                setTimeout(adjustLayout, 150); 
+                setTimeout(adjustLayout, 200); 
             } catch (e) {
                 log.innerText = "LİSTE HATASI!";
             }
