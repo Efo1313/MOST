@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOST PRO - ABSOLUTE FIXED</title>
+    <title>MOST PRO - CLEAN LOOK</title>
     
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
@@ -16,13 +16,12 @@
             --deep-bg: #050505; --btn-black: #121212; 
         }
         
-        /* Sayfanın ana kaydırmasını tamamen öldür */
         html, body { 
             height: 100%; margin: 0; padding: 0; overflow: hidden; 
             background: var(--deep-bg); color: white; font-family: 'Inter', sans-serif;
         }
 
-        /* --- ÜST KISIM: EKRANA ÇAKILI (HİÇ KIPIRDAMAZ) --- */
+        /* --- ÜST KISIM --- */
         #fixed-header {
             position: absolute;
             top: 0; left: 0; right: 0;
@@ -32,7 +31,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            border-bottom: 2px solid #1a1a1a;
+            /* Alt kısımdaki çok koyu gri çizgiyi de istersen 0px yapabilirsin */
+            border-bottom: 1px solid #1a1a1a; 
         }
 
         h1 { font-size: 1.4rem; font-weight: 900; margin: 10px 0; text-transform: uppercase; letter-spacing: 2px; }
@@ -40,7 +40,9 @@
 
         .player-container { 
             width: 100%; max-width: 800px; aspect-ratio: 16 / 9;
-            background: #000; position: relative; border-bottom: 2px solid var(--deep-pink);
+            background: #000; position: relative; 
+            /* KIRMIZI ÇİZGİ BURADAN KALDIRILDI */
+            border-bottom: none; 
         }
 
         .status-bar { 
@@ -63,18 +65,15 @@
         }
         .cat-btn.active { border-color: var(--neon-green); color: var(--neon-green); }
 
-        /* --- ALT KISIM: KAYDIRILABİLİR KANAL LİSTESİ --- */
+        /* --- ALT KISIM --- */
         #scroll-area {
             position: absolute;
-            /* Üstteki sabit alanın yüksekliği kadar boşluk bırakıyoruz */
-            top: 360px; /* Bu değer ekran boyutuna göre JS ile de ayarlanacak */
+            top: 360px; 
             bottom: 0; left: 0; right: 0;
-            overflow-y: auto; /* SADECE BURASI KAYAR */
+            overflow-y: auto; 
             padding: 15px;
             -webkit-overflow-scrolling: touch;
         }
-
-        @media (max-width: 600px) { #scroll-area { top: 340px; } } /* Küçük ekran ayarı */
 
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 800px; margin: 0 auto; }
         .btn { 
@@ -131,7 +130,6 @@
 
         const player = new Plyr(video, { controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] });
 
-        // Sabit alanın yüksekliğini ölçüp alttaki boşluğu otomatik ayarla
         function adjustLayout() {
             const h = header.offsetHeight;
             scrollArea.style.top = h + "px";
@@ -145,7 +143,7 @@
                 log.style.color = "#39ff14";
                 createCategories();
                 filterCat('hepsi');
-                adjustLayout(); // Yüksekliği güncelle
+                setTimeout(adjustLayout, 100); 
             } catch (e) {
                 log.innerText = "❌ JSON HATASI!";
             }
