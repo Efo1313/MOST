@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOST PRO - CHROME FIXED</title>
+    <title>IPTV MOST PRO - FINAL V.1.3.7</title>
     
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
@@ -13,107 +13,96 @@
     <style>
         :root { 
             --deep-pink: #ff007a; --neon-green: #39ff14; --warning-yellow: #ffeb3b;
-            --deep-bg: #050505; --btn-black: #121212; 
+            --retry-orange: #ff9800; --error-red: #ff4d4d; --deep-bg: #050505; 
+            --btn-black: #121212; --glass-white: rgba(255, 255, 255, 0.1);
         }
         
-        html, body { 
-            height: 100%; margin: 0; padding: 0; overflow: hidden; 
-            background: var(--deep-bg); color: white; font-family: 'Inter', sans-serif;
-            -webkit-text-size-adjust: 100%; /* Chrome mobil için font kaymasını engeller */
-        }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: var(--deep-bg); color: white; font-family: 'Inter', sans-serif; }
 
+        /* SABİT ÜST PANEL */
         #fixed-header {
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            z-index: 999;
-            background: var(--deep-bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: var(--deep-bg); display: flex; flex-direction: column; align-items: center; padding: 10px 0 0 0;
         }
-
-        h1 { font-size: 1.4rem; font-weight: 900; margin: 10px 0; text-transform: uppercase; letter-spacing: 2px; }
+        
+        h1 { font-size: 1.5rem; font-weight: 900; margin: 10px 0; text-transform: uppercase; letter-spacing: 2px; }
         h1 span { color: var(--deep-pink); text-shadow: 0 0 10px var(--deep-pink); }
 
-        /* --- PLAYER DÜZENLEMESİ --- */
+        /* PLAYER KONTEYNER VE BOŞLUK SIFIRLAMA */
         .player-container { 
-            width: 100%; max-width: 800px; aspect-ratio: 16 / 9;
-            background: #000; position: relative; 
-            border: none !important;
-            display: block; /* Chrome'da inline-block boşluğunu engeller */
-            line-height: 0; /* İçerideki tüm hayali boşlukları sıfırlar */
+            width: 100%; max-width: 800px; aspect-ratio: 16/9;
+            background: #000; position: relative; border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); touch-action: none;
         }
 
-        /* Plyr kütüphanesinin kendi alt boşluğunu sıfırlıyoruz */
-        .plyr { border-radius: 0 !important; }
+        #brightness-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; opacity: 0; pointer-events: none; z-index: 2; }
+        #gesture-info {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.85); color: white; padding: 12px 24px;
+            border-radius: 30px; font-weight: bold; display: none; z-index: 100;
+            pointer-events: none; border: 1.5px solid var(--deep-pink); font-size: 14px;
+        }
 
-        /* --- STATUS BAR (YEŞİL YAZI) - TAM YAPIŞTIRMA --- */
+        #loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; z-index: 10; }
+        .spinner { width: 35px; height: 35px; border: 3px solid var(--glass-white); border-top: 3px solid var(--deep-pink); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* YEŞİL YAZI - PLAYER'A SIFIR YAPIŞIK */
         .status-bar { 
-            width: 100%; max-width: 800px; 
-            padding: 2px 15px;
-            box-sizing: border-box;
-            display: flex; justify-content: space-between; 
-            font-size: 10px; font-weight: bold; 
-            background: rgba(255,255,255,0.03);
-            margin-top: -1px !important; /* Player'ın dibine girmesi için zorunlu negatif margin */
-            position: relative;
-            z-index: 10;
+            width: 100%; max-width: 800px; display: flex; justify-content: space-between; 
+            align-items: center; padding: 6px 15px; font-size: 11px; font-weight: bold; 
+            background: rgba(255,255,255,0.03); margin-top: 0; 
         }
 
-        .category-bar { 
-            display: flex; gap: 8px; width: 100%; max-width: 800px;
-            padding: 10px 15px; box-sizing: border-box; overflow-x: auto; 
-            scrollbar-width: none;
-        }
+        .category-bar { display: flex; gap: 8px; width: 100%; max-width: 800px; padding: 12px 15px; overflow-x: auto; scrollbar-width: none; box-sizing: border-box; }
         .category-bar::-webkit-scrollbar { display: none; }
         
-        .cat-btn { 
-            background: var(--btn-black); border: 1px solid #333; color: #888; 
-            padding: 8px 18px; border-radius: 20px; font-size: 10px; font-weight: 700; 
-            cursor: pointer; white-space: nowrap; text-transform: uppercase;
-        }
+        .cat-btn { background: var(--btn-black); border: 1px solid #333; color: #888; padding: 8px 18px; border-radius: 20px; font-size: 10px; font-weight: 700; cursor: pointer; white-space: nowrap; text-transform: uppercase; }
         .cat-btn.active { border-color: var(--neon-green); color: var(--neon-green); }
 
+        /* KAYDIRILABİLİR ALAN */
         #scroll-area {
-            position: absolute;
-            top: 340px; 
-            bottom: 0; left: 0; right: 0;
-            overflow-y: auto; padding: 15px;
-            -webkit-overflow-scrolling: touch;
+            position: absolute; left: 0; right: 0; bottom: 0;
+            overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch;
         }
 
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 800px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 800px; margin: 0 auto; }
+        
         .btn { 
             background: var(--btn-black); border: 1.5px solid #333; color: #ddd; 
-            padding: 18px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; 
-            text-align: center; cursor: pointer; text-transform: uppercase; 
+            padding: 16px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; 
+            text-align: center; cursor: pointer; text-transform: uppercase;
         }
         .btn.active { background: linear-gradient(135deg, #ff007a 0%, #a600ff 100%) !important; border: 1.5px solid #fff !important; }
 
-        .footer-text { text-align: center; padding: 40px 0; color: #aaaaaa; font-size: 10px; font-weight: 600; letter-spacing: 2px; }
-
-        #loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; z-index: 10; }
-        .spinner { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--deep-pink); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* ŞEFFAF FOOTER */
+        .footer { width: 100%; text-align: center; padding: 40px 0; color: rgba(255,255,255,0.1); font-size: 10px; letter-spacing: 2px; font-weight: 700; }
     </style>
 </head>
 <body>
 
     <div id="fixed-header">
-        <h1>MOST <span>PRO</span></h1><div class="player-container" id="touch-area">
+        <h1>MOST <span>PRO</span></h1>
+
+        <div class="player-container" id="touch-area">
+            <div id="brightness-overlay"></div>
+            <div id="gesture-info"></div>
             <div id="loader"><div class="spinner"></div></div>
             <video id="deepPlayer" playsinline controls></video>
-        </div><div class="status-bar">
-            <span id="log" style="color: var(--neon-green);">SİSTEM HAZIR</span>
-            <span style="color: #444;">V.1.9.1 FIXED</span>
         </div>
 
-        <div class="category-bar" id="cat-bar"></div>
+        <div class="status-bar">
+            <span id="log" style="color: var(--neon-green);">SİSTEM HAZIRLANIR...</span>
+            <span style="color: #444;">DUO V.1.3.7</span>
+        </div>
+
+        <div class="category-bar" id="cat-bar">
+            </div>
     </div>
 
     <div id="scroll-area">
-        <div id="channel-list" class="grid"></div>
-        <div class="footer-text">DESIGNED BY YÜKSEL • 2026</div>
+        <div class="grid" id="channel-list"></div>
+        <div class="footer">DESIGNED BY YÜKSEL • 2026</div>
     </div>
 
     <script>
@@ -122,52 +111,57 @@
         const loader = document.getElementById('loader');
         const header = document.getElementById('fixed-header');
         const scrollArea = document.getElementById('scroll-area');
+        const touchArea = document.getElementById('touch-area');
+        const gestureInfo = document.getElementById('gesture-info');
+        const brightnessOverlay = document.getElementById('brightness-overlay');
         
         let kanallar = [];
         let hls = null;
+        let startY, startVal, isRightSide, currentBrightness = 0;
 
         const player = new Plyr(video, { controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] });
 
+        // DÜZEN AYARI
         function adjustLayout() {
-            const h = header.offsetHeight;
-            scrollArea.style.top = h + "px";
+            scrollArea.style.top = header.offsetHeight + "px";
         }
 
-        async function loadChannels() {
+        // VERİ ÇEKME (kanallar.json)
+        async function fetchChannels() {
             try {
                 const response = await fetch('kanallar.json');
                 kanallar = await response.json();
-                log.innerText = `SİSTEM HAZIR (${kanallar.length} KANAL)`;
-                createCategories();
+                renderCategories();
                 filterCat('hepsi');
-                setTimeout(adjustLayout, 200); 
+                log.innerText = `SİSTEM HAZIR (${kanallar.length} KANAL)`;
+                setTimeout(adjustLayout, 200);
             } catch (e) {
-                log.innerText = "LİSTE HATASI!";
+                log.innerText = "LİSTE YÜKLENEMEDİ!";
+                log.style.color = "var(--error-red)";
             }
         }
 
-        function createCategories() {
+        function renderCategories() {
             const catBar = document.getElementById('cat-bar');
-            const cats = ['hepsi', ...new Set(kanallar.map(k => k.cat))];
+            const uniqueCats = ['hepsi', ...new Set(kanallar.map(k => k.cat))];
             catBar.innerHTML = "";
-            cats.forEach(c => {
-                const btn = document.createElement('div');
-                btn.className = 'cat-btn' + (c === 'hepsi' ? ' active' : '');
-                btn.innerText = c.toUpperCase();
-                btn.onclick = () => {
+            uniqueCats.forEach(cat => {
+                const div = document.createElement('div');
+                div.className = `cat-btn ${cat === 'hepsi' ? 'active' : ''}`;
+                div.innerText = cat;
+                div.onclick = () => {
                     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    filterCat(c);
+                    div.classList.add('active');
+                    filterCat(cat);
                 };
-                catBar.appendChild(btn);
+                catBar.appendChild(div);
             });
-            adjustLayout();
         }
 
         function filterCat(cat) {
             const list = document.getElementById('channel-list');
             list.innerHTML = "";
-            const filtered = (cat === 'hepsi') ? kanallar : kanallar.filter(c => c.cat === cat);
+            const filtered = cat === 'hepsi' ? kanallar : kanallar.filter(c => c.cat === cat);
             filtered.forEach(ch => {
                 const b = document.createElement('div');
                 b.className = 'btn';
@@ -178,11 +172,36 @@
             scrollArea.scrollTop = 0;
         }
 
+        // GESTURE (SES/PARLAKLIK)
+        touchArea.addEventListener('touchstart', e => {
+            const touch = e.touches[0];
+            startY = touch.pageY;
+            isRightSide = touch.pageX > touchArea.offsetWidth / 2;
+            startVal = isRightSide ? player.volume * 100 : (1 - currentBrightness) * 100;
+        });
+
+        touchArea.addEventListener('touchmove', e => {
+            const deltaY = startY - e.touches[0].pageY;
+            let newVal = Math.min(Math.max(startVal + (deltaY * 0.6), 0), 100);
+            gestureInfo.style.display = 'block';
+            if (isRightSide) {
+                player.volume = newVal / 100;
+                gestureInfo.innerHTML = `🔊 Ses: %${Math.round(newVal)}`;
+            } else {
+                currentBrightness = 1 - (newVal / 100);
+                brightnessOverlay.style.opacity = currentBrightness;
+                gestureInfo.innerHTML = `🔆 Parlaklık: %${Math.round(newVal)}`;
+            }
+        });
+        touchArea.addEventListener('touchend', () => setTimeout(() => gestureInfo.style.display = 'none', 600));
+
+        // OYNATMA
         function playCh(url, el, name) {
             document.querySelectorAll('.btn').forEach(x => x.classList.remove('active'));
             el.classList.add('active');
             loader.style.display = "block";
-            log.innerText = `${name} AÇILIYOR...`;
+            log.style.color = "var(--warning-yellow)";
+            log.innerText = "⏳ " + name;
 
             if (hls) hls.destroy();
             if (Hls.isSupported()) {
@@ -192,13 +211,14 @@
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
                     video.play();
                     loader.style.display = "none";
-                    log.innerText = `● CANLI: ${name}`;
+                    log.style.color = "var(--neon-green)";
+                    log.innerText = "● CANLI: " + name;
                 });
             }
         }
-
-        window.addEventListener('resize', adjustLayout);
-        loadChannels();
+        
+        window.onload = fetchChannels;
+        window.onresize = adjustLayout;
     </script>
 </body>
 </html>
