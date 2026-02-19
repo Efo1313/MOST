@@ -3,201 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>IPTV MOST PRO - Duo Layout V.1.3.6</title>
-    
+    <title>MOST PRO V.1.3.6</title>
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    
     <style>
-        :root { 
-            --deep-pink: #ff007a; --neon-green: #39ff14; --warning-yellow: #ffeb3b;
-            --retry-orange: #ff9800; --error-red: #ff4d4d; --deep-bg: #050505; 
-            --btn-black: #121212; --glass-white: rgba(255, 255, 255, 0.1);
-        }
+        :root { --pink: #ff007a; --green: #39ff14; --bg: #050505; --btn: #121212; }
+        body { margin: 0; background: var(--bg); color: white; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
         
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: var(--deep-bg); color: white; font-family: 'Inter', sans-serif; }
+        /* ÜST PANEL SABİT */
+        #header { padding: 10px; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid #222; z-index: 100; }
+        h1 { margin: 5px 0; font-size: 1.4rem; text-transform: uppercase; }
+        h1 span { color: var(--pink); }
 
-        #top-section {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            background: var(--deep-bg);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px 15px 5px 15px;
-            border-bottom: 1px solid var(--glass-white);
-        }
-        
-        h1 { font-size: 1.5rem; font-weight: 900; margin: 5px 0 10px 0; text-transform: uppercase; letter-spacing: 2px; }
-        h1 span { color: var(--deep-pink); text-shadow: 0 0 10px var(--deep-pink); }
+        .player-container { width: 100%; max-width: 600px; border-radius: 8px; overflow: hidden; background: #000; }
+        .status { width: 100%; max-width: 600px; display: flex; justify-content: space-between; padding: 5px 10px; font-size: 10px; font-weight: bold; color: var(--green); }
 
-        .player-container { 
-            width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; 
-            background: #000; position: relative; border: 1px solid var(--glass-white);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
-        }
+        .cats { display: flex; gap: 8px; width: 100%; max-width: 600px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+        .cat-btn { background: var(--btn); border: 1px solid #333; color: #888; padding: 6px 12px; border-radius: 20px; font-size: 10px; white-space: nowrap; cursor: pointer; }
+        .cat-btn.active { border-color: var(--green); color: var(--green); }
 
-        .status-bar { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; font-size: 11px; font-weight: bold; background: rgba(255,255,255,0.02); }
-
-        .category-bar { display: flex; gap: 8px; width: 100%; max-width: 800px; margin: 10px 0; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
-        .category-bar::-webkit-scrollbar { display: none; }
-        
-        .cat-btn { background: var(--btn-black); border: 1px solid #333; color: #888; padding: 7px 15px; border-radius: 20px; font-size: 10px; font-weight: 700; cursor: pointer; white-space: nowrap; text-transform: uppercase; }
-        .cat-btn.active { border-color: var(--neon-green); color: var(--neon-green); }
-
-        #scroll-content {
-            position: absolute;
-            left: 0; right: 0; bottom: 0;
-            overflow-y: auto;
-            padding: 10px 15px 30px 15px;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 800px; margin: 0 auto; }
-        
-        .btn { 
-            background: var(--btn-black); border: 1.5px solid #333; color: #ddd; 
-            padding: 15px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; 
-            text-align: center; cursor: pointer; text-transform: uppercase; 
-        }
-        .btn.active { background: linear-gradient(135deg, #ff007a 0%, #a600ff 100%) !important; border: 1.8px solid #fff !important; }
-
-        .footer { width: 100%; max-width: 800px; text-align: center; padding: 30px 0; color: #222; font-size: 9px; margin: 0 auto; }
-
-        #loader { position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:none; z-index:10; }
-        .spinner { width:30px; height:30px; border:3px solid rgba(255,255,255,0.1); border-top:3px solid var(--deep-pink); border-radius:50%; animation:spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* KAYDIRILABİLİR LİSTE */
+        #list-area { flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 600px; margin: 0 auto; }
+        .btn { background: var(--btn); border: 1px solid #333; color: #ccc; padding: 15px 5px; border-radius: 10px; font-size: 11px; text-align: center; font-weight: bold; cursor: pointer; }
+        .btn.active { background: linear-gradient(135deg, var(--pink), #a600ff); border-color: #fff; color: #fff; }
     </style>
 </head>
 <body>
 
-    <div id="top-section">
-        <h1>MOST <span>PRO</span></h1>
-        <div class="player-container">
-            <div id="loader"><div class="spinner"></div></div>
-            <video id="deepPlayer" playsinline controls></video>
-        </div>
-        <div class="status-bar">
-            <span id="log" style="color: var(--neon-green);">YÜKLENİYOR...</span>
-            <span style="color: #444;">DUO V.1.3.6</span>
-        </div>
-        <div class="category-bar" id="cat-nav"></div>
-    </div>
+<div id="header">
+    <h1>MOST <span>PRO</span></h1>
+    <div class="player-container"><video id="video" playsinline controls></video></div>
+    <div class="status"><span id="log">SİSTEM HAZIR</span><span>V.1.3.6</span></div>
+    <div id="cat-nav" class="cats"></div>
+</div>
 
-    <div id="scroll-content">
-        <div class="grid" id="channel-list"></div>
-        <div class="footer">DESIGNED BY YÜKSEL • 2026</div>
-    </div>
+<div id="list-area">
+    <div id="channel-list" class="grid"></div>
+</div>
 
-    <script>
-        const video = document.getElementById('deepPlayer');
-        const log = document.getElementById('log');
-        const topSection = document.getElementById('top-section');
-        const scrollContent = document.getElementById('scroll-content');
-        const loader = document.getElementById('loader');
-        
-        let hls = null;
-        let kanallar = []; // JSON'dan gelecek liste
+<script>
+    let kanallar = [];
+    const video = document.getElementById('video');
+    const log = document.getElementById('log');
+    const player = new Plyr(video, { controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] });
+    let hls = null;
 
-        const player = new Plyr(video, { controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] });
-
-        // Yerleşim Ayarı
-        const adjustLayout = () => {
-            const h = topSection.offsetHeight;
-            scrollContent.style.top = h + "px";
-        };
-
-        const resizeObserver = new ResizeObserver(() => adjustLayout());
-        resizeObserver.observe(topSection);
-
-        // JSON'DAN VERİ ÇEKME
-        async function fetchChannels() {
-            try {
-                const response = await fetch('kanallar.json'); // JSON dosyanın adı
-                if (!response.ok) throw new Error('Dosya yüklenemedi');
-                kanallar = await response.json();
-                
-                initApp();
-            } catch (error) {
-                log.style.color = "var(--error-red)";
-                log.innerText = "JSON HATASI: " + error.message;
-            }
+    // JSON'DAN ÇEK
+    async function yukle() {
+        try {
+            const res = await fetch('kanallar.json');
+            kanallar = await res.json();
+            init();
+        } catch (e) {
+            log.innerText = "JSON OKUNAMADI!";
+            log.style.color = "red";
         }
+    }
 
-        function initApp() {
-            createCategories();
-            filterCat('hepsi');
-            log.innerText = "SİSTEM HAZIR";
-            adjustLayout();
-        }
+    function init() {
+        const categories = ['HEPSİ', ...new Set(kanallar.map(k => k.cat.toUpperCase()))];
+        document.getElementById('cat-nav').innerHTML = categories.map(c => 
+            `<div class="cat-btn" onclick="filtrele('${c.toLowerCase()}', this)">${c}</div>`
+        ).join('');
+        document.querySelector('.cat-btn').classList.add('active');
+        filtrele('hepsi');
+    }
 
-        function createCategories() {
-            const nav = document.getElementById('cat-nav');
-            const cats = ['HEPSİ', ...new Set(kanallar.map(k => k.cat.toUpperCase()))];
-            nav.innerHTML = cats.map(c => `
-                <div class="cat-btn ${c === 'HEPSİ' ? 'active' : ''}" 
-                     onclick="filterCat('${c.toLowerCase()}', this)">${c}</div>
-            `).join('');
-        }
-
-        function filterCat(cat, el) {
-            if(el) {
-                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                el.classList.add('active');
-            }
-            const list = document.getElementById('channel-list');
-            list.innerHTML = "";
-            const filtered = cat === 'hepsi' ? kanallar : kanallar.filter(c => c.cat.toLowerCase() === cat);
-            
-            filtered.forEach(ch => {
-                const b = document.createElement('div');
-                b.className = 'btn';
-                b.innerText = ch.ad;
-                b.onclick = () => playCh(ch.url, b, ch.ad);
-                list.appendChild(b);
-            });
-            scrollContent.scrollTop = 0;
-        }
-
-        function playCh(url, el, name) {
-            document.querySelectorAll('.btn').forEach(x => x.classList.remove('active'));
+    function filtrele(cat, el) {
+        if(el) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-            
-            loader.style.display = "block";
-            log.style.color = "var(--warning-yellow)";
-            log.innerText = "⏳ BAĞLANILIYOR: " + name;
-
-            if (hls) hls.destroy();
-
-            if (Hls.isSupported()) {
-                hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play();
-                    loader.style.display = "none";
-                    log.style.color = "var(--neon-green)";
-                    log.innerText = "✅ CANLI: " + name;
-                });
-                hls.on(Hls.Events.ERROR, () => {
-                    loader.style.display = "none";
-                    log.style.color = "var(--error-red)";
-                    log.innerText = "❌ YAYIN HATASI";
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.addEventListener('loadedmetadata', () => {
-                    video.play();
-                    loader.style.display = "none";
-                    log.innerText = "✅ CANLI: " + name;
-                });
-            }
         }
+        const list = document.getElementById('channel-list');
+        list.innerHTML = "";
+        const f = cat === 'hepsi' ? kanallar : kanallar.filter(k => k.cat.toLowerCase() === cat);
+        f.forEach(ch => {
+            const b = document.createElement('div');
+            b.className = 'btn'; b.innerText = ch.ad;
+            b.onclick = () => oynat(ch.url, b, ch.ad);
+            list.appendChild(b);
+        });
+    }
 
-        window.onload = fetchChannels;
-    </script>
+    function oynat(url, el, ad) {
+        document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        log.innerText = "YÜKLENİYOR: " + ad;
+        if (hls) hls.destroy();
+        if (Hls.isSupported()) {
+            hls = new Hls(); hls.loadSource(url); hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play(); log.innerText = "CANLI: " + ad; });
+        }
+    }
+
+    window.onload = yukle;
+</script>
 </body>
 </html>
