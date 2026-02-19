@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOST PRO - V.1.7.6 FIXED</title>
+    <title>MOST PRO - FIXED UI V.1.7.7</title>
     
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
@@ -16,43 +16,47 @@
             --error-red: #ff4d4d; --deep-bg: #050505; --btn-black: #121212; 
         }
         
-        /* Ekranın dışarı taşmasını ve sayfanın genel kaymasını tamamen kapatıyoruz */
+        /* Sayfanın tamamının kaymasını engelle */
         html, body { 
             height: 100vh; margin: 0; padding: 0; overflow: hidden; 
             background: var(--deep-bg); color: white; font-family: 'Inter', sans-serif;
             display: flex; flex-direction: column;
         }
 
-        /* --- ÜST SABİT PANEL (Logo, Player, Gruplar) --- */
+        /* --- ÜST SABİT BÖLÜM (YAZI + PLAYER + GRUPLAR) --- */
         header {
-            flex-shrink: 0; /* Yukarı doğru daralmasını engeller */
+            flex-shrink: 0; /* Küçülmeyi önle */
             width: 100%;
             z-index: 1000;
             background: var(--deep-bg);
             border-bottom: 1px solid #1a1a1a;
             display: flex;
             flex-direction: column;
+            align-items: center;
         }
 
-        h1 { font-size: 1.5rem; font-weight: 900; margin: 10px 0; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
+        /* Sabit Yazı */
+        h1 { font-size: 1.5rem; font-weight: 900; margin: 10px 0; text-transform: uppercase; letter-spacing: 2px; }
         h1 span { color: var(--deep-pink); text-shadow: 0 0 10px var(--deep-pink); }
 
+        /* Sabit Player */
         .player-container { 
-            width: 100%; max-width: 800px; aspect-ratio: 16 / 9; margin: 0 auto;
+            width: 100%; max-width: 800px; aspect-ratio: 16 / 9;
             background: #000; position: relative; border-bottom: 2px solid var(--deep-pink);
-            touch-action: none; /* Player üzerinde sayfa kaymasını engeller */
+            touch-action: none;
         }
 
         .status-bar { 
-            width: 100%; max-width: 800px; margin: 0 auto; padding: 8px 15px; box-sizing: border-box;
+            width: 100%; max-width: 800px; padding: 6px 15px; box-sizing: border-box;
             display: flex; justify-content: space-between; align-items: center; 
             font-size: 10px; font-weight: bold; background: rgba(255,255,255,0.03);
         }
 
+        /* Sabit Gruplar (Kategoriler) */
         .category-bar { 
-            display: flex; gap: 8px; width: 100%; max-width: 800px; margin: 0 auto;
+            display: flex; gap: 8px; width: 100%; max-width: 800px;
             padding: 10px 15px; box-sizing: border-box; overflow-x: auto; 
-            scrollbar-width: none;
+            scrollbar-width: none; background: var(--deep-bg);
         }
         .category-bar::-webkit-scrollbar { display: none; }
         
@@ -63,13 +67,13 @@
         }
         .cat-btn.active { border-color: var(--neon-green); color: var(--neon-green); }
 
-        /* --- KAYDIRILABİLİR ALAN (Sadece burası hareket eder) --- */
+        /* --- HAREKETLİ KANAL LİSTESİ --- */
         main {
-            flex-grow: 1; /* Kalan tüm boşluğu doldurur */
+            flex-grow: 1; /* Kalan alanı kapla */
             width: 100%; max-width: 800px; align-self: center;
-            overflow-y: auto; /* Dikey kaydırmayı açar */
+            overflow-y: auto; /* Sadece dikey kaydırma açık */
             padding: 15px; box-sizing: border-box;
-            -webkit-overflow-scrolling: touch; /* Mobilde yağ gibi akması için */
+            -webkit-overflow-scrolling: touch;
         }
 
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -82,9 +86,9 @@
 
         .footer-text { text-align: center; padding: 30px; color: #aaaaaa; font-size: 10px; font-weight: 600; letter-spacing: 2px; }
 
-        /* JESTLER & LOADER */
+        /* Jestler & Loader */
         #brightness-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; opacity: 0; pointer-events: none; z-index: 2; }
-        #gesture-info { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); color: white; padding: 10px 20px; border-radius: 30px; display: none; z-index: 100; border: 1.5px solid var(--deep-pink); font-size: 13px; }
+        #gesture-info { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); color: white; padding: 10px 20px; border-radius: 30px; display: none; z-index: 100; border: 1px solid var(--deep-pink); font-size: 13px; }
         #loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; z-index: 10; }
         .spinner { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--deep-pink); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -94,16 +98,19 @@
 
     <header>
         <h1>MOST <span>PRO</span></h1>
+        
         <div class="player-container" id="touch-area">
             <div id="brightness-overlay"></div>
             <div id="gesture-info"></div>
             <div id="loader"><div class="spinner"></div></div>
             <video id="deepPlayer" playsinline controls></video>
         </div>
+
         <div class="status-bar">
-            <span id="log" style="color: var(--warning-yellow);">⚙️ BAŞLATILIYOR...</span>
-            <span style="color: #444;">FIXED PRO V1.7.6</span>
+            <span id="log" style="color: var(--warning-yellow);">⚙️ SİSTEM BAŞLATILIYOR...</span>
+            <span style="color: #444;">PRO FIXED V1.7.7</span>
         </div>
+
         <div class="category-bar" id="cat-bar"></div>
     </header>
 
@@ -128,21 +135,23 @@
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] 
         });
 
+        // GitHub'dan Veri Çekme
         async function loadChannels() {
             try {
                 const response = await fetch('kanallar.json');
                 if (!response.ok) throw new Error();
                 kanallar = await response.json();
-                log.innerText = `✅ SİSTEM HAZIR (${kanallar.length} KANAL)`;
+                log.innerText = `✅ BAĞLANDI (${kanallar.length} KANAL)`;
                 log.style.color = "#39ff14";
                 createCategories();
                 filterCat('hepsi');
             } catch (e) {
-                log.innerText = "❌ JSON DOSYASI OKUNAMADI!";
+                log.innerText = "❌ JSON OKUNAMADI!";
                 log.style.color = "#ff4d4d";
             }
         }
 
+        // Dokunmatik Kontroller
         touchArea.addEventListener('touchstart', e => {
             startY = e.touches[0].pageY;
             isRightSide = e.touches[0].pageX > touchArea.offsetWidth / 2;
@@ -201,7 +210,7 @@
             el.classList.add('active');
             loader.style.display = "block";
             log.style.color = "var(--warning-yellow)";
-            log.innerText = `⏳ ${name} açılıyor...`;
+            log.innerText = `⏳ ${name} yükleniyor...`;
 
             if (hls) hls.destroy();
 
@@ -219,7 +228,7 @@
                     if (d.fatal) {
                         loader.style.display = "none";
                         log.style.color = "#ff4d4d";
-                        log.innerText = "❌ YAYIN HATASI!";
+                        log.innerText = "❌ YAYIN AÇILAMADI";
                         hls.destroy();
                     }
                 });
