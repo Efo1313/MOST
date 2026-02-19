@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>IPTV MOST PRO - Final Dynamic V.1.4.2</title>
+    <title>MOST PRO - V.1.7.5 FINAL</title>
     
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
@@ -14,66 +14,94 @@
         :root { 
             --deep-pink: #ff007a; --neon-green: #39ff14; --warning-yellow: #ffeb3b;
             --error-red: #ff4d4d; --deep-bg: #050505; --btn-black: #121212; 
-            --glass-white: rgba(255, 255, 255, 0.1);
         }
         
-        body { background: var(--deep-bg); color: white; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; touch-action: manipulation; }
-        h1 { font-size: 1.6rem; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
+        html, body { 
+            height: 100%; margin: 0; padding: 0; overflow: hidden; 
+            background: var(--deep-bg); color: white; font-family: 'Inter', sans-serif;
+            display: flex; flex-direction: column;
+        }
+
+        /* ÜST SABİT PANEL */
+        header {
+            flex-shrink: 0; width: 100%; z-index: 1000;
+            background: var(--deep-bg); box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+        }
+
+        h1 { font-size: 1.6rem; font-weight: 900; margin: 15px 0; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
         h1 span { color: var(--deep-pink); text-shadow: 0 0 10px var(--deep-pink); }
 
         .player-container { 
-            width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; 
-            background: #000; position: relative; border: 1px solid var(--glass-white);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8); touch-action: none;
+            width: 100%; max-width: 800px; aspect-ratio: 16 / 9; margin: 0 auto;
+            background: #000; position: relative; border-bottom: 2px solid var(--deep-pink);
         }
 
-        #brightness-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; opacity: 0; pointer-events: none; z-index: 2; }
-        #gesture-info {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.85); color: white; padding: 12px 24px;
-            border-radius: 30px; font-weight: bold; display: none; z-index: 100;
-            pointer-events: none; border: 1.5px solid var(--deep-pink); font-size: 14px;
+        .status-bar { 
+            width: 100%; max-width: 800px; margin: 0 auto; padding: 10px 15px; box-sizing: border-box;
+            display: flex; justify-content: space-between; align-items: center; 
+            font-size: 11px; font-weight: bold; background: rgba(255,255,255,0.03);
         }
 
-        #loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; z-index: 10; }
-        .spinner { width: 35px; height: 35px; border: 3px solid var(--glass-white); border-top: 3px solid var(--deep-pink); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .status-bar { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; padding: 10px; font-size: 12px; font-weight: bold; background: rgba(255,255,255,0.02); border-radius: 0 0 10px 10px; margin-bottom: 10px; }
-
-        .category-bar { display: flex; gap: 8px; width: 100%; max-width: 800px; margin: 10px 0; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+        .category-bar { 
+            display: flex; gap: 8px; width: 100%; max-width: 800px; margin: 0 auto;
+            padding: 12px 15px; box-sizing: border-box; overflow-x: auto; 
+            scrollbar-width: none;
+        }
         .category-bar::-webkit-scrollbar { display: none; }
         
-        .cat-btn { background: var(--btn-black); border: 1px solid #333; color: #888; padding: 8px 18px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.3s; white-space: nowrap; }
+        .cat-btn { 
+            background: var(--btn-black); border: 1px solid #333; color: #888; 
+            padding: 10px 22px; border-radius: 25px; font-size: 11px; font-weight: 700; 
+            cursor: pointer; transition: 0.3s; white-space: nowrap; text-transform: uppercase;
+        }
         .cat-btn.active { border-color: var(--neon-green); color: var(--neon-green); }
 
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 800px; }
-        .btn { background: var(--btn-black); border: 1.5px solid #333; color: #ddd; padding: 16px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
-        .btn.active { background: linear-gradient(135deg, #ff007a 0%, #a600ff 100%) !important; border: 1.8px solid #fff !important; box-shadow: 0 5px 15px rgba(255, 0, 122, 0.3); }
+        /* KAYAR KANAL LİSTESİ */
+        main {
+            flex-grow: 1; width: 100%; max-width: 800px; align-self: center;
+            overflow-y: auto; padding: 15px; box-sizing: border-box;
+            -webkit-overflow-scrolling: touch;
+        }
 
-        .footer { width: 100%; max-width: 800px; text-align: center; padding: 25px 0; color: #333; font-size: 10px; letter-spacing: 1px; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .btn { 
+            background: var(--btn-black); border: 1.5px solid #333; color: #ddd; 
+            padding: 20px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; 
+            text-align: center; cursor: pointer; transition: 0.2s; text-transform: uppercase; 
+        }
+        .btn.active { background: linear-gradient(135deg, #ff007a 0%, #a600ff 100%) !important; border: 1.5px solid #fff !important; }
+
+        .footer-text { text-align: center; padding: 35px; color: #aaaaaa; font-size: 11px; font-weight: 600; letter-spacing: 2px; }
+
+        /* JESTLER & LOADER */
+        #brightness-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; opacity: 0; pointer-events: none; z-index: 2; }
+        #gesture-info { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 30px; display: none; z-index: 100; border: 1.5px solid var(--deep-pink); font-size: 14px; }
+        #loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; z-index: 10; }
+        .spinner { width: 35px; height: 35px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--deep-pink); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <h1>MOST <span>PRO</span></h1>
+    <header>
+        <h1>MOST <span>PRO</span></h1>
+        <div class="player-container" id="touch-area">
+            <div id="brightness-overlay"></div>
+            <div id="gesture-info"></div>
+            <div id="loader"><div class="spinner"></div></div>
+            <video id="deepPlayer" playsinline controls></video>
+        </div>
+        <div class="status-bar">
+            <span id="log" style="color: var(--warning-yellow);">⚙️ BAĞLANILIYOR...</span>
+            <span style="color: #444;">V.1.7.5 PRO</span>
+        </div>
+        <div class="category-bar" id="cat-bar"></div>
+    </header>
 
-    <div class="player-container" id="touch-area">
-        <div id="brightness-overlay"></div>
-        <div id="gesture-info"></div>
-        <div id="loader"><div class="spinner"></div></div>
-        <video id="deepPlayer" playsinline controls></video>
-    </div>
-
-    <div class="status-bar">
-        <span id="log" style="color: var(--warning-yellow);">⚙️ LİSTE YÜKLENİYOR...</span>
-        <span style="color: #444;">V.1.4.2 FINAL</span>
-    </div>
-
-    <div class="category-bar" id="cat-bar"></div>
-    <div class="grid" id="channel-list"></div>
-
-    <div class="footer">DESIGNED BY YÜKSEL • 2026</div>
+    <main id="main-scroll">
+        <div id="channel-list" class="grid"></div>
+        <div class="footer-text">DESIGNED BY YÜKSEL • 2026</div>
+    </main>
 
     <script>
         const video = document.getElementById('deepPlayer');
@@ -85,47 +113,37 @@
         
         let kanallar = [];
         let hls = null;
-        let startY, startVal, isRightSide;
-        let currentBrightness = 0;
-
-        // GitHub'da aynı klasördeki kanallar.json'u okuması için linki hazırladık
-        const LISTE_URL = "kanallar.json"; 
+        let startY, startVal, isRightSide, currentBrightness = 0;
 
         const player = new Plyr(video, { 
-            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen']
+            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] 
         });
 
-        // 1. KANALLARI ÇEK
+        // KANALLARI ÇEKME VE HATA AYIKLAMA
         async function loadChannels() {
             try {
-                const response = await fetch(LISTE_URL);
-                if (!response.ok) throw new Error("JSON bulunamadı");
-                const data = await response.json();
-                kanallar = Array.isArray(data) ? data : (data.record || []);
-                
-                log.innerText = "✅ SİSTEM HAZIR (" + kanallar.length + " KANAL)";
+                const response = await fetch('kanallar.json');
+                if (!response.ok) throw new Error('JSON_MISSING');
+                kanallar = await response.json();
+                log.innerText = `✅ SİSTEM HAZIR (${kanallar.length} KANAL)`;
                 log.style.color = "#39ff14";
-                
                 createCategories();
                 filterCat('hepsi');
             } catch (error) {
-                log.innerText = "❌ LİSTE YÜKLENEMEDİ!";
-                log.style.color = "var(--error-red)";
+                log.innerText = "❌ LİSTE BULUNAMADI!";
+                log.style.color = "#ff4d4d";
             }
         }
 
-        // 2. JESTLER (SES/PARLAKLIK)
+        // SES VE PARLAKLIK JESTLERİ
         touchArea.addEventListener('touchstart', e => {
-            const touch = e.touches[0];
-            startY = touch.pageY;
-            const rect = touchArea.getBoundingClientRect();
-            isRightSide = touch.pageX > rect.left + rect.width / 2;
+            startY = e.touches[0].pageY;
+            isRightSide = e.touches[0].pageX > touchArea.offsetWidth / 2;
             startVal = isRightSide ? player.volume * 100 : (1 - currentBrightness) * 100;
         });
 
         touchArea.addEventListener('touchmove', e => {
-            const touch = e.touches[0];
-            const deltaY = startY - touch.pageY;
+            const deltaY = startY - e.touches[0].pageY;
             let newVal = Math.min(Math.max(startVal + (deltaY * 0.6), 0), 100);
             gestureInfo.style.display = 'block';
             if (isRightSide) {
@@ -140,7 +158,6 @@
 
         touchArea.addEventListener('touchend', () => { setTimeout(() => gestureInfo.style.display = 'none', 600); });
 
-        // 3. KATEGORİ VE LİSTELEME
         function createCategories() {
             const catBar = document.getElementById('cat-bar');
             const cats = ['hepsi', ...new Set(kanallar.map(k => k.cat))];
@@ -169,55 +186,43 @@
                 b.onclick = () => playCh(ch.url, b, ch.ad);
                 list.appendChild(b);
             });
+            document.getElementById('main-scroll').scrollTop = 0;
         }
 
-        // 4. HLS OYNATICI VE HATA YAKALAMA
+        // GELİŞMİŞ OYNATICI VE HATA YAKALAMA
         function playCh(url, el, name) {
             document.querySelectorAll('.btn').forEach(x => x.classList.remove('active'));
             el.classList.add('active');
             loader.style.display = "block";
             log.style.color = "var(--warning-yellow)";
-            log.innerText = "⏳ " + name + " açılıyor...";
+            log.innerText = `⏳ ${name} açılıyor...`;
 
             if (hls) hls.destroy();
 
             if (Hls.isSupported()) {
-                hls = new Hls({ manifestLoadingMaxRetry: 3 });
+                hls = new Hls({ manifestLoadingMaxRetry: 2, enableWorker: true });
                 hls.loadSource(url);
                 hls.attachMedia(video);
-                
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play().catch(() => { log.innerText = "▶ HAZIR"; });
+                    video.play();
                     loader.style.display = "none";
                     log.style.color = "#39ff14";
-                    log.innerText = "✅ CANLI: " + name;
+                    log.innerText = `● CANLI: ${name}`;
                 });
-
-                // TAVSİYE EDİLEN HATA YAKALAMA KISMI
-                hls.on(Hls.Events.ERROR, function (event, data) {
+                
+                // HATA AYIKLAMA (DEBUGGING)
+                hls.on(Hls.Events.ERROR, (event, data) => {
                     if (data.fatal) {
                         loader.style.display = "none";
-                        log.style.color = "var(--error-red)";
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                log.innerText = "❌ YAYIN BAĞLANTISI KOPTU";
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                log.innerText = "❌ VİDEO HATASI: FORMAT UYUMSUZ";
-                                break;
-                            default:
-                                log.innerText = "❌ YAYIN ŞU AN AKTİF DEĞİL";
-                                break;
-                        }
+                        log.style.color = "#ff4d4d";
+                        log.innerText = "❌ YAYIN ŞU AN AKTİF DEĞİL";
                         hls.destroy();
                     }
                 });
-
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            } else {
                 video.src = url;
                 video.play();
                 loader.style.display = "none";
-                log.innerText = "✅ " + name;
             }
         }
 
